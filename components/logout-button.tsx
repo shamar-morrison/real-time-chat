@@ -18,16 +18,14 @@ export function LogoutButton() {
       await supabase.auth.signOut()
       router.push('/auth/login')
     } catch (_err) {
+      // error state
     } finally {
       setTimeout(() => setIsLoading(false), 250) // cleaner animation
     }
   }
 
   return (
-    <Button
-      onClick={logout}
-      className={cn('w-28', isLoading && 'pointer-events-none opacity-50')}
-    >
+    <Button onClick={logout} disabled={isLoading} className={'w-28'}>
       {isLoading ? (
         <LoaderCircle className={cn('animate-spin repeat-infinite')} />
       ) : (
