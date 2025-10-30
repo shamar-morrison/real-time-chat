@@ -13,7 +13,7 @@ import Link from 'next/link'
 export default async function Home() {
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 space-y-8">
-      <Empty className="border border-dashed">
+      <Empty className="bg-gray-50">
         <EmptyHeader>
           <EmptyMedia variant={'icon'}>
             <MessagesSquareIcon />

@@ -24,7 +24,13 @@ export function LogoutButton() {
   }
 
   return (
-    <Button onClick={logout} disabled={isLoading} className={'w-28'}>
+    <Button
+      onClick={logout}
+      disabled={isLoading}
+      className={'w-28'}
+      size={'sm'}
+      variant={'outline'}
+    >
       {isLoading ? <Spinner /> : <span>Logout</span>}
     </Button>
   )
