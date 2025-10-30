@@ -1,5 +1,6 @@
 'use client'
 
+import { createRoom } from '@/actions/rooms'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -22,10 +23,14 @@ import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
-const formSchema = z.object({ name: z.string(), isPublic: z.boolean() })
-type FormData = z.infer<typeof formSchema>
+export const createRoomSchema = z.object({
+  name: z.string(),
+  isPublic: z.boolean(),
+})
+type FormData = z.infer<typeof createRoomSchema>
 
 export default function NewRoomPage() {
   const form = useForm<FormData>({
@@ -33,12 +38,16 @@ export default function NewRoomPage() {
       name: '',
       isPublic: false,
     },
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(createRoomSchema),
   })
 
   async function handleSubmit(data: FormData) {
-    await new Promise((res, rej) => setTimeout(res, 1000))
-    console.log(data)
+    const { error, message } = await createRoom(data)
+    if (error) {
+      toast.error('Error', {
+        description: message,
+      })
+    }
   }
 
   return (
