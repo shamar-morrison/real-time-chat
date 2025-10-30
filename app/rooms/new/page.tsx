@@ -27,7 +27,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 export const createRoomSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1, 'Room name is required'),
   isPublic: z.boolean(),
 })
 type FormData = z.infer<typeof createRoomSchema>
