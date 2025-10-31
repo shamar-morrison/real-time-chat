@@ -11,6 +11,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import { FaGithub } from 'react-icons/fa'
 
 export function LoginForm({
   className,
@@ -52,7 +53,14 @@ export function LoginForm({
             <div className="flex flex-col gap-6">
               {error && <p className="text-sm text-destructive-500">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : 'Continue with GitHub'}
+                {isLoading ? (
+                  'Logging in...'
+                ) : (
+                  <div className="flex gap-2 items-center">
+                    <FaGithub />
+                    Continue with GitHub
+                  </div>
+                )}
               </Button>
             </div>
           </form>
