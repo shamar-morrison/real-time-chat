@@ -23,7 +23,7 @@ export function Navbar() {
             <></>
           ) : (
             <>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground hidden md:block">
                 Hello, {user.email}
               </span>
               <LogoutButton />
