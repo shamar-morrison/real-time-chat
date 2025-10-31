@@ -61,8 +61,17 @@ export default async function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <RoomList title="Your Rooms" rooms={joinedRooms} isJoined />
-      <RoomList title="Public Rooms" rooms={unjoinedRooms} />
+      <RoomList
+        title="Your Rooms"
+        rooms={joinedRooms}
+        isJoined
+        showCreateButton={joinedRooms.length > 0}
+      />
+      <RoomList
+        title="Public Rooms"
+        rooms={unjoinedRooms}
+        showCreateButton={joinedRooms.length === 0 && unjoinedRooms.length > 0}
+      />
     </div>
   )
 }
@@ -71,10 +80,12 @@ function RoomList({
   title,
   rooms,
   isJoined = false,
+  showCreateButton = false,
 }: {
   title: string
   rooms: { id: string; name: string; member_count: number }[]
   isJoined?: boolean
+  showCreateButton?: boolean
 }) {
   if (rooms.length === 0) return null
 
@@ -82,9 +93,11 @@ function RoomList({
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-2xl">{title}</h2>
-        <Button asChild>
-          <Link href="/rooms/new">Create Room</Link>
-        </Button>
+        {showCreateButton && (
+          <Button asChild>
+            <Link href="/rooms/new">Create Room</Link>
+          </Button>
+        )}
       </div>
       <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
         {rooms.map((room) => (
