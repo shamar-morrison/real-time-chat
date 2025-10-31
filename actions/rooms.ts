@@ -2,7 +2,7 @@
 
 import { createRoomSchema } from '@/lib/schemas/room'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import { redirect } from 'next/dist/client/components/navigation.react-server'
 import z from 'zod'
 
@@ -18,7 +18,7 @@ export async function createRoom(unsafeData: z.infer<typeof createRoomSchema>) {
     return { error: true, message: 'User not authenticated' }
   }
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   // create room
   const { data: room, error: roomError } = await supabase
