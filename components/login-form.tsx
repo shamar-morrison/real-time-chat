@@ -20,7 +20,11 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSocialLogin = async (provider: 'github' | 'google') => {
+  const handleSocialLogin = async (
+    provider: 'github' | 'google',
+    e: React.FormEvent,
+  ) => {
+    e.preventDefault()
     const supabase = createClient()
     setIsLoading(true)
     setError(null)
@@ -60,7 +64,7 @@ export function LoginForm({
               type="button"
               className="w-full"
               disabled={isLoading}
-              onClick={() => handleSocialLogin('github')}
+              onClick={(e: React.FormEvent) => handleSocialLogin('github', e)}
             >
               {isLoading ? (
                 'Logging in...'
@@ -75,7 +79,7 @@ export function LoginForm({
               type="button"
               className="w-full"
               disabled={isLoading}
-              onClick={() => handleSocialLogin('google')}
+              onClick={(e: React.FormEvent) => handleSocialLogin('google', e)}
             >
               {isLoading ? (
                 'Logging in...'
