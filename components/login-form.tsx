@@ -34,8 +34,8 @@ export function LoginForm({
             ...(provider === 'google' && {
               access_type: 'offline',
               prompt: 'consent',
-            })
-          }
+            }),
+          },
         },
       })
 
