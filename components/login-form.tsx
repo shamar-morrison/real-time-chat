@@ -19,6 +19,17 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<'div'>) {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingGithub, setIsLoadingGithub] = useState(false)
+  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false)
+
+  const handleIsLoading = (provider: 'github' | 'google') => {
+    setIsLoading(true)
+    if (provider === 'github') {
+      setIsLoadingGithub(true)
+    } else {
+      setIsLoadingGoogle(true)
+    }
+  }
 
   const handleSocialLogin = async (
     provider: 'github' | 'google',
@@ -26,7 +37,7 @@ export function LoginForm({
   ) => {
     e.preventDefault()
     const supabase = createClient()
-    setIsLoading(true)
+    handleIsLoading(provider)
     setError(null)
 
     try {
@@ -66,7 +77,7 @@ export function LoginForm({
               disabled={isLoading}
               onClick={(e: React.FormEvent) => handleSocialLogin('github', e)}
             >
-              {isLoading ? (
+              {isLoadingGithub ? (
                 'Logging in...'
               ) : (
                 <div className="flex gap-2 items-center">
@@ -81,7 +92,7 @@ export function LoginForm({
               disabled={isLoading}
               onClick={(e: React.FormEvent) => handleSocialLogin('google', e)}
             >
-              {isLoading ? (
+              {isLoadingGoogle ? (
                 'Logging in...'
               ) : (
                 <div className="flex gap-2 items-center">
