@@ -1,6 +1,6 @@
 'use server'
 
-import { createRoomSchema } from '@/app/rooms/new/page'
+import { createRoomSchema } from '@/lib/schemas/room'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/dist/client/components/navigation.react-server'

@@ -19,21 +19,15 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { LoadingSwap } from '@/components/ui/loading-swap'
+import { CreateRoomData, createRoomSchema } from '@/lib/schemas/room'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
-
-export const createRoomSchema = z.object({
-  name: z.string().min(1, 'Room name is required'),
-  isPublic: z.boolean(),
-})
-type FormData = z.infer<typeof createRoomSchema>
 
 export default function NewRoomPage() {
-  const form = useForm<FormData>({
+  const form = useForm<CreateRoomData>({
     defaultValues: {
       name: '',
       isPublic: false,
@@ -41,7 +35,7 @@ export default function NewRoomPage() {
     resolver: zodResolver(createRoomSchema),
   })
 
-  async function handleSubmit(data: FormData) {
+  async function handleSubmit(data: CreateRoomData) {
     const { error, message } = await createRoom(data)
     if (error) {
       toast.error('Error', {
