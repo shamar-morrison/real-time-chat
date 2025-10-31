@@ -30,6 +30,12 @@ export function LoginForm({
         provider,
         options: {
           redirectTo: `${window.location.origin}/auth/oauth?next=/`,
+          queryParams: {
+            ...(provider === 'google' && {
+              access_type: 'offline',
+              prompt: 'consent',
+            })
+          }
         },
       })
 
