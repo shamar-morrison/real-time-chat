@@ -1,4 +1,5 @@
 import { Navbar } from '@/components/navbar'
+import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
 import { Fira_Code, Poppins } from 'next/font/google'
@@ -25,11 +26,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} ${firaCode.variable} antialiased`}>
-        <Navbar />
-        <main>{children}</main>
-        <Toaster richColors />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <main>{children}</main>
+          <Toaster richColors />
+        </ThemeProvider>
       </body>
     </html>
   )

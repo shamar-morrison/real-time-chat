@@ -1,6 +1,7 @@
 'use client'
 
 import { LogoutButton } from '@/components/logout-button'
+import { ModeToggle } from '@/components/mode-toggle'
 import { Spinner } from '@/components/ui/spinner'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import Link from 'next/link'
@@ -14,18 +15,21 @@ export function Navbar() {
           LinaChat
         </Link>
 
-        {isLoading ? (
-          <Spinner />
-        ) : !user ? (
-          <></>
-        ) : (
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">
-              Hello, {user.email}
-            </span>
-            <LogoutButton />
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          <ModeToggle />
+          {isLoading ? (
+            <Spinner />
+          ) : !user ? (
+            <></>
+          ) : (
+            <>
+              <span className="text-sm text-muted-foreground">
+                Hello, {user.email}
+              </span>
+              <LogoutButton />
+            </>
+          )}
+        </div>
       </nav>
     </div>
   )
