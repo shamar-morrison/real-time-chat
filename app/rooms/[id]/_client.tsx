@@ -166,22 +166,32 @@ function useRealtimeChat({
         .on('presence', { event: 'sync' }, () => {
           setConnectedUsers(Object.keys(newChannel.presenceState()).length)
         })
-        .on('broadcast', { event: 'INSERT' }, (payload) => {
-          const record = payload.payload
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: record.id,
-              text: record.text,
-              created_at: record.created_at,
-              author_id: record.author_id,
-              author: {
-                name: record.author_name,
-                image_url: record.author_image_url,
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `chat_room_id=eq.${roomId}`,
+          },
+          (payload) => {
+            const record = payload.new as any
+            // The trigger enriches the record with author info
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                id: record.id,
+                text: record.text,
+                created_at: record.created_at,
+                author_id: record.author_id,
+                author: {
+                  name: record.author_name,
+                  image_url: record.author_image_url,
+                },
               },
-            },
-          ])
-        })
+            ])
+          },
+        )
         .subscribe((status) => {
           if (status !== 'SUBSCRIBED') return
 
