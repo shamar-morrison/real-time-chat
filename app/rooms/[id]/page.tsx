@@ -1,4 +1,4 @@
-import { RoomClient } from '@/components/room-client'
+import { RoomClient } from '@/app/rooms/[id]/_client'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
@@ -21,7 +21,7 @@ export default async function RoomPage({
     return notFound()
   }
 
-  return <RoomClient room={room} user={user} messages={messages} />
+  return <RoomClient room={room} user={user} messages={messages || []} />
 }
 
 async function getRoom(id: string) {

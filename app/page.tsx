@@ -127,13 +127,18 @@ function RoomCard({
           {member_count} {member_count === 1 ? 'member' : 'members'}
         </CardDescription>
       </CardHeader>
-      <CardFooter className="gap-2">
+      <CardFooter className="gap-2 flex-col">
         {isJoined ? (
           <>
-            <Button asChild className="grow" size="sm">
+            <Button asChild className="w-full" size="sm">
               <Link href={`/rooms/${id}`}>Enter</Link>
             </Button>
-            <LeaveRoomButton roomId={id} size="sm" variant="destructive">
+            <LeaveRoomButton
+              roomId={id}
+              size="sm"
+              variant="secondary"
+              className="w-full"
+            >
               Leave
             </LeaveRoomButton>
           </>
@@ -141,7 +146,7 @@ function RoomCard({
           <JoinRoomButton
             roomId={id}
             variant="outline"
-            className="grow"
+            className="w-full"
             size="sm"
           >
             Join
