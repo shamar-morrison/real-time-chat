@@ -1,6 +1,10 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { Loader2Icon } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { crossfadeVariants } from '@/lib/animations'
 
 export function LoadingSwap({
   isLoading,
@@ -13,24 +17,37 @@ export function LoadingSwap({
 }) {
   return (
     <div className="grid grid-cols-1 items-center justify-items-center">
-      <div
-        className={cn(
-          'col-start-1 col-end-2 row-start-1 row-end-2 w-full',
-          isLoading ? 'invisible' : 'visible',
-          className,
+      <AnimatePresence mode="wait" initial={false}>
+        {isLoading ? (
+          <motion.div
+            key="loading"
+            className={cn(
+              'col-start-1 col-end-2 row-start-1 row-end-2',
+              className,
+            )}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={crossfadeVariants}
+          >
+            <Loader2Icon className="animate-spin" />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            className={cn(
+              'col-start-1 col-end-2 row-start-1 row-end-2 w-full',
+              className,
+            )}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={crossfadeVariants}
+          >
+            {children}
+          </motion.div>
         )}
-      >
-        {children}
-      </div>
-      <div
-        className={cn(
-          'col-start-1 col-end-2 row-start-1 row-end-2',
-          isLoading ? 'visible' : 'invisible',
-          className,
-        )}
-      >
-        <Loader2Icon className="animate-spin" />
-      </div>
+      </AnimatePresence>
     </div>
   )
 }

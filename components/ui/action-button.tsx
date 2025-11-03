@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { LoadingSwap } from '@/components/ui/loading-swap'
+import { AnimatedButton } from '@/components/animated-button'
 import { type ComponentProps, type ReactNode, useTransition } from 'react'
 import { toast } from 'sonner'
 
@@ -39,7 +40,9 @@ export function ActionButton({
     return (
       <AlertDialog open={isLoading ? true : undefined}>
         <AlertDialogTrigger asChild>
-          <Button {...props} />
+          <AnimatedButton disabled={props.disabled} className={props.className}>
+            <Button {...props} />
+          </AnimatedButton>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -60,20 +63,22 @@ export function ActionButton({
   }
 
   return (
-    <Button
-      {...props}
-      disabled={props.disabled ?? isLoading}
-      onClick={(e) => {
-        performAction()
-        props.onClick?.(e)
-      }}
-    >
-      <LoadingSwap
-        isLoading={isLoading}
-        className="inline-flex items-center gap-2"
+    <AnimatedButton disabled={props.disabled ?? isLoading} className={props.className}>
+      <Button
+        {...props}
+        disabled={props.disabled ?? isLoading}
+        onClick={(e) => {
+          performAction()
+          props.onClick?.(e)
+        }}
       >
-        {props.children}
-      </LoadingSwap>
-    </Button>
+        <LoadingSwap
+          isLoading={isLoading}
+          className="inline-flex items-center gap-2"
+        >
+          {props.children}
+        </LoadingSwap>
+      </Button>
+    </AnimatedButton>
   )
 }

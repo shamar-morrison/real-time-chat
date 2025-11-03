@@ -5,6 +5,8 @@ import { sendMessage } from '@/lib/supabase/send-message'
 import { SendIcon } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { toast } from 'sonner'
+import { motion } from 'framer-motion'
+import { buttonPressVariants } from '@/lib/animations'
 import {
   InputGroup,
   InputGroupAddon,
@@ -60,14 +62,21 @@ export function ChatInput({
           }}
         />
         <InputGroupAddon align="inline-end">
-          <InputGroupButton
-            type="submit"
-            aria-label="Send"
-            title="Send"
-            size="icon-sm"
+          <motion.div
+            initial="rest"
+            whileHover="hover"
+            whileTap="press"
+            variants={buttonPressVariants}
           >
-            <SendIcon />
-          </InputGroupButton>
+            <InputGroupButton
+              type="submit"
+              aria-label="Send"
+              title="Send"
+              size="icon-sm"
+            >
+              <SendIcon />
+            </InputGroupButton>
+          </motion.div>
         </InputGroupAddon>
       </InputGroup>
     </form>

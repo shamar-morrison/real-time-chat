@@ -25,6 +25,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { AnimatedPage } from '@/components/animated-page'
 
 export default function NewRoomPage() {
   const form = useForm<CreateRoomData>({
@@ -45,15 +46,16 @@ export default function NewRoomPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-lg mx-auto w-full">
-        <CardHeader>
-          <CardTitle>New Room</CardTitle>
-          <CardDescription>Create a new room</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
-            <FieldGroup>
+    <AnimatedPage>
+      <div className="container mx-auto px-4 py-8">
+        <Card className="max-w-lg mx-auto w-full">
+          <CardHeader>
+            <CardTitle>New Room</CardTitle>
+            <CardDescription>Create a new room</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={form.handleSubmit(handleSubmit)}>
+              <FieldGroup>
               <Controller
                 name="name"
                 control={form.control}
@@ -132,5 +134,6 @@ export default function NewRoomPage() {
         </CardContent>
       </Card>
     </div>
+    </AnimatedPage>
   )
 }

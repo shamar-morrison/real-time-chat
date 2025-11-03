@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 
 export type Message = {
   id: string
@@ -91,13 +92,15 @@ export function RoomClient({
               </Button>
             </div>
           )}
-          {visibleMessages.map((message, index) => (
-            <ChatMessage
-              key={message.id}
-              {...message}
-              ref={index === 0 && status === 'idle' ? triggerQueryRef : null}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {visibleMessages.map((message, index) => (
+              <ChatMessage
+                key={message.id}
+                {...message}
+                ref={index === 0 && status === 'idle' ? triggerQueryRef : null}
+              />
+            ))}
+          </AnimatePresence>
         </div>
       </div>
       <ChatInput
