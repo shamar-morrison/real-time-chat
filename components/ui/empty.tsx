@@ -4,8 +4,9 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { fadeInVariants, staggerContainerVariants, staggerItemVariants } from "@/lib/animations"
+import { ComponentPropsWithoutRef } from "react"
 
-function Empty({ className, ...props }: React.ComponentProps<"div">) {
+function Empty({ className, ...props }: ComponentPropsWithoutRef<typeof motion.div>) {
   return (
     <motion.div
       data-slot="empty"
@@ -21,7 +22,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
+function EmptyHeader({ className, ...props }: ComponentPropsWithoutRef<typeof motion.div>) {
   return (
     <motion.div
       data-slot="empty-header"
@@ -56,7 +57,7 @@ function EmptyMedia({
   className,
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof emptyMediaVariants>) {
+}: ComponentPropsWithoutRef<typeof motion.div> & VariantProps<typeof emptyMediaVariants>) {
   return (
     <motion.div
       data-slot="empty-icon"
@@ -68,7 +69,7 @@ function EmptyMedia({
   )
 }
 
-function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
+function EmptyTitle({ className, ...props }: ComponentPropsWithoutRef<typeof motion.div>) {
   return (
     <motion.div
       data-slot="empty-title"
@@ -79,7 +80,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
+function EmptyDescription({ className, ...props }: ComponentPropsWithoutRef<typeof motion.div>) {
   return (
     <motion.div
       data-slot="empty-description"
@@ -93,7 +94,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   )
 }
 
-function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
+function EmptyContent({ className, ...props }: ComponentPropsWithoutRef<typeof motion.div>) {
   return (
     <motion.div
       data-slot="empty-content"
