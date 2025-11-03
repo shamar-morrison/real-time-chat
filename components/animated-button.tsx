@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import { buttonPressVariants } from "@/lib/animations";
-import { ComponentPropsWithoutRef, forwardRef } from "react";
+import { buttonPressVariants } from '@/lib/animations'
+import { motion } from 'framer-motion'
+import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
 /**
  * Animated button wrapper that adds subtle press and hover effects
@@ -15,14 +15,14 @@ export const AnimatedButton = forwardRef<
     <motion.div
       ref={ref}
       initial="rest"
-      whileHover={!disabled ? "hover" : "rest"}
-      whileTap={!disabled ? "press" : "rest"}
+      whileHover={!disabled ? 'hover' : 'rest'}
+      whileTap={!disabled ? 'press' : 'rest'}
       variants={buttonPressVariants}
       {...props}
     >
       {children}
     </motion.div>
-  );
-});
+  )
+})
 
-AnimatedButton.displayName = "AnimatedButton";
+AnimatedButton.displayName = 'AnimatedButton'

@@ -1,12 +1,12 @@
 'use client'
 
 import { Message } from '@/app/rooms/[id]/_client'
+import { buttonPressVariants } from '@/lib/animations'
 import { sendMessage } from '@/lib/supabase/send-message'
+import { motion } from 'framer-motion'
 import { SendIcon } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { toast } from 'sonner'
-import { motion } from 'framer-motion'
-import { buttonPressVariants } from '@/lib/animations'
 import {
   InputGroup,
   InputGroupAddon,
