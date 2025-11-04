@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { fadeInVariants, slideDownVariants } from '@/lib/animations'
 import { AnimatePresence, motion } from 'framer-motion'
+import { Cat } from 'lucide-react'
 import Link from 'next/link'
 
 export function Navbar() {
@@ -18,7 +19,11 @@ export function Navbar() {
       variants={slideDownVariants}
     >
       <nav className="container mx-auto justify-between items-center px-4 flex h-full gap-4">
-        <Link href="/" className="text-xl font-bold">
+        <Link
+          href="/"
+          className="text-xl font-black font-poppins tracking-tight flex items-center gap-1"
+        >
+          <Cat />
           LinaChat
         </Link>
 

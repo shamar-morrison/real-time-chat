@@ -2,18 +2,13 @@ import { Navbar } from '@/components/navbar'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
-import { Fira_Code, Poppins } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 
 const poppins = Poppins({
   variable: '--font-poppins',
-  weight: '400',
-})
-
-const firaCode = Fira_Code({
-  variable: '--font-fira-code',
-  subsets: ['latin'],
+  weight: ['400', '900'],
 })
 
 export const metadata: Metadata = {
@@ -28,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} ${firaCode.variable} antialiased`}>
+      <body className={`${poppins.variable} antialiased`}>
         <NextTopLoader color="#ff82ec" showSpinner={false} height={5} />
         <ThemeProvider
           attribute="class"

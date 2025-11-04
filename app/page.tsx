@@ -1,3 +1,6 @@
+import { AnimatedPage } from '@/components/animated-page'
+import { AnimatedRoomList } from '@/components/animated-room-list'
+import { CreateRoomDialog } from '@/components/create-room-dialog'
 import {
   Empty,
   EmptyContent,
@@ -6,13 +9,17 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
-import { AnimatedPage } from '@/components/animated-page'
-import { AnimatedRoomList } from '@/components/animated-room-list'
-import { CreateRoomDialog } from '@/components/create-room-dialog'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 import { MessagesSquareIcon } from 'lucide-react'
+import { Metadata } from 'next'
 import { redirect } from 'next/dist/client/components/navigation.react-server'
+
+// generate metadata
+export const metadata: Metadata = {
+  title: 'LinaChat',
+  description: 'Real-time chat application',
+}
 
 export default async function Home() {
   const user = await getCurrentUser()
@@ -63,7 +70,9 @@ export default async function Home() {
         <AnimatedRoomList
           title="Public Rooms"
           rooms={unjoinedRooms}
-          showCreateButton={joinedRooms.length === 0 && unjoinedRooms.length > 0}
+          showCreateButton={
+            joinedRooms.length === 0 && unjoinedRooms.length > 0
+          }
         />
       </div>
     </AnimatedPage>
