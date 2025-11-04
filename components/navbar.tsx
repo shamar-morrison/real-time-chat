@@ -4,9 +4,9 @@ import { LogoutButton } from '@/components/logout-button'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Spinner } from '@/components/ui/spinner'
 import { useCurrentUser } from '@/hooks/use-current-user'
+import { fadeInVariants, slideDownVariants } from '@/lib/animations'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import { slideDownVariants, fadeInVariants } from '@/lib/animations'
 
 export function Navbar() {
   const { isLoading, user } = useCurrentUser()
@@ -47,7 +47,7 @@ export function Navbar() {
                 variants={fadeInVariants}
               >
                 <span className="text-sm text-muted-foreground hidden md:block">
-                  Hello, {user.email}
+                  Hello, {user.user_metadata.name || user.email}
                 </span>
                 <LogoutButton />
               </motion.div>
