@@ -1,10 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { AnimatedRoomCard } from "@/components/animated-room-card";
+import { CreateRoomDialog } from "@/components/create-room-dialog";
 import { staggerContainerVariants, staggerItemVariants } from "@/lib/animations";
-import Link from "next/link";
 
 /**
  * Animated room list with staggered card animations
@@ -26,11 +25,7 @@ export function AnimatedRoomList({
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-2xl">{title}</h2>
-        {showCreateButton && (
-          <Button asChild>
-            <Link href="/rooms/new">Create Room</Link>
-          </Button>
-        )}
+        {showCreateButton && <CreateRoomDialog />}
       </div>
       <motion.div
         className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]"

@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import {
   Empty,
   EmptyContent,
@@ -9,11 +8,11 @@ import {
 } from '@/components/ui/empty'
 import { AnimatedPage } from '@/components/animated-page'
 import { AnimatedRoomList } from '@/components/animated-room-list'
+import { CreateRoomDialog } from '@/components/create-room-dialog'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 import { MessagesSquareIcon } from 'lucide-react'
 import { redirect } from 'next/dist/client/components/navigation.react-server'
-import Link from 'next/link'
 
 export default async function Home() {
   const user = await getCurrentUser()
@@ -44,9 +43,7 @@ export default async function Home() {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button asChild>
-                <Link href="rooms/new">Create Room</Link>
-              </Button>
+              <CreateRoomDialog />
             </EmptyContent>
           </Empty>
         </div>
