@@ -15,7 +15,7 @@ import { addUserToRoom } from '@/actions/rooms'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserPlusIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { SetStateAction, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import z from 'zod'
@@ -50,8 +50,15 @@ export function InviteUserModal({ roomId }: { roomId: string }) {
     }
   }
 
+  const handleOpenChange = (open: SetStateAction<boolean>) => {
+    setOpen(open)
+    form.reset({
+      userId: '',
+    })
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline">
           <UserPlusIcon className="w-4 h-4" />
