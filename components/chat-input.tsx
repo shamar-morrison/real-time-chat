@@ -5,8 +5,9 @@ import { buttonPressVariants } from '@/lib/animations'
 import { sendMessage } from '@/lib/supabase/send-message'
 import { motion } from 'framer-motion'
 import { SendIcon } from 'lucide-react'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { EmojiPicker } from './emoji-picker'
 import {
   InputGroup,
   InputGroupAddon,
@@ -28,6 +29,7 @@ export function ChatInput({
   onErrorSend,
 }: Props) {
   const [message, setMessage] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   async function handleSubmit(e?: FormEvent) {
     e?.preventDefault()
@@ -46,10 +48,35 @@ export function ChatInput({
     }
   }
 
+  const handleEmojiSelect = (emoji: string) => {
+    const textarea = textareaRef.current
+    if (!textarea) {
+      setMessage((prev) => prev + emoji)
+      return
+    }
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const text = message
+    const before = text.substring(0, start)
+    const after = text.substring(end)
+    const newText = before + emoji + after
+
+    setMessage(newText)
+
+    // Set cursor position after emoji
+    setTimeout(() => {
+      const newPosition = start + emoji.length
+      textarea.setSelectionRange(newPosition, newPosition)
+      textarea.focus()
+    }, 0)
+  }
+
   return (
     <form onSubmit={handleSubmit} className="p-3">
       <InputGroup>
         <InputGroupTextarea
+          ref={textareaRef}
           placeholder="Type your message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -61,7 +88,8 @@ export function ChatInput({
             }
           }}
         />
-        <InputGroupAddon align="inline-end">
+        <InputGroupAddon align="inline-end" className="gap-0">
+          <EmojiPicker onEmojiSelect={handleEmojiSelect} />
           <motion.div
             initial="rest"
             whileHover="hover"
