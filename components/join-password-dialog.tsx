@@ -46,7 +46,7 @@ export function JoinPasswordDialog({
       setError(result.message)
       setIsSubmitting(false)
     } else {
-      toast.success('Success', {
+      toast.success('', {
         description: 'You have joined the room',
       })
       onOpenChange(false)
@@ -56,8 +56,14 @@ export function JoinPasswordDialog({
     }
   }
 
+  function handleOpenChange(open: boolean) {
+    setError(null)
+    setPassword('')
+    onOpenChange(open)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Password Required</DialogTitle>
