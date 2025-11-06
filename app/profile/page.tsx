@@ -1,7 +1,7 @@
 import { updateDisplayName } from '@/actions/user'
 import { AnimatedPage } from '@/components/animated-page'
+import { ProfileForm } from '@/components/profile-form'
 import { getUserProfile } from '@/lib/supabase/get-user-profile'
-import { ProfileForm } from './profile-form'
 
 export default async function ProfilePage() {
   const profile = await getUserProfile()
