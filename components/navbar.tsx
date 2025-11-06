@@ -2,9 +2,10 @@
 
 import { LogoutButton } from '@/components/logout-button'
 import { ModeToggle } from '@/components/mode-toggle'
+import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { useUser } from '@/contexts/user-context'
-import { Cat } from 'lucide-react'
+import { Cat, User2Icon } from 'lucide-react'
 import Link from 'next/link'
 
 export function Navbar() {
@@ -29,9 +30,16 @@ export function Navbar() {
           ) : !user ? (
             <></>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground hidden md:block">
                 Hello, {user.user_metadata.name || user.email}
+              </span>
+              <span>
+                <Button asChild variant={'ghost'} size={'sm'}>
+                  <Link href={'/profile'}>
+                    <User2Icon size={15} />
+                  </Link>
+                </Button>
               </span>
               <LogoutButton />
             </div>
