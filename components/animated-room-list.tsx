@@ -15,7 +15,7 @@ export function AnimatedRoomList({
   showCreateButton = false,
 }: {
   title: string;
-  rooms: { id: string; name: string; member_count: number }[];
+  rooms: { id: string; name: string; member_count: number; has_password?: boolean; is_public?: boolean }[];
   isJoined?: boolean;
   showCreateButton?: boolean;
 }) {

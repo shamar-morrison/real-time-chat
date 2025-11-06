@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card'
 import { cardHoverVariants } from '@/lib/animations'
 import { motion } from 'framer-motion'
+import { Lock } from 'lucide-react'
 import Link from 'next/link'
 
 /**
@@ -22,11 +23,13 @@ export function AnimatedRoomCard({
   name,
   member_count,
   isJoined,
+  has_password,
 }: {
   id: string
   name: string
   member_count: number
   isJoined: boolean
+  has_password?: boolean
 }) {
   return (
     <motion.div
@@ -35,7 +38,12 @@ export function AnimatedRoomCard({
       animate="rest"
       variants={cardHoverVariants}
     >
-      <Card className="h-full">
+      <Card className="h-full relative">
+        {has_password && !isJoined && (
+          <div className="absolute top-3 right-3 text-muted-foreground">
+            <Lock className="h-4 w-4" />
+          </div>
+        )}
         <CardHeader>
           <CardTitle>{name}</CardTitle>
           <CardDescription>
@@ -60,9 +68,11 @@ export function AnimatedRoomCard({
           ) : (
             <JoinRoomButton
               roomId={id}
+              roomName={name}
               variant="outline"
               className="w-full"
               size="sm"
+              hasPassword={has_password}
             >
               Join
             </JoinRoomButton>

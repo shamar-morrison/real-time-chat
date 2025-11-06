@@ -1,22 +1,35 @@
 'use client'
 
+import { JoinPasswordDialog } from '@/components/join-password-dialog'
 import { ActionButton } from '@/components/ui/action-button'
 import { useUser } from '@/contexts/user-context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { ComponentProps } from 'react'
+import { ComponentProps, useState } from 'react'
 
 export function JoinRoomButton({
   children,
   roomId,
+  roomName,
+  hasPassword,
   ...props
-}: Omit<ComponentProps<typeof ActionButton>, 'action'> & { roomId: string }) {
+}: Omit<ComponentProps<typeof ActionButton>, 'action'> & {
+  roomId: string
+  roomName: string
+  hasPassword?: boolean
+}) {
   const { user } = useUser()
   const router = useRouter()
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
 
   async function joinRoom() {
     if (user == null) {
       return { error: true, message: 'User not logged in' }
+    }
+
+    if (hasPassword) {
+      setShowPasswordDialog(true)
+      return { error: false }
     }
 
     const supabase = createClient()
@@ -36,8 +49,16 @@ export function JoinRoomButton({
   }
 
   return (
-    <ActionButton {...props} action={joinRoom}>
-      {children}
-    </ActionButton>
+    <>
+      <ActionButton {...props} action={joinRoom}>
+        {children}
+      </ActionButton>
+      <JoinPasswordDialog
+        open={showPasswordDialog}
+        onOpenChange={setShowPasswordDialog}
+        roomId={roomId}
+        roomName={roomName}
+      />
+    </>
   )
 }

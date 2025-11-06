@@ -32,9 +32,12 @@ export function CreateRoomDialog() {
     defaultValues: {
       name: '',
       isPublic: false,
+      password: '',
     },
     resolver: zodResolver(createRoomSchema),
   })
+
+  const isPublic = form.watch('isPublic')
 
   async function handleSubmit(data: CreateRoomData) {
     const { error, message } = await createRoom(data)
@@ -101,10 +104,7 @@ export function CreateRoomDialog() {
                       disabled={form.formState.isSubmitting}
                     />
                     <FieldContent>
-                      <FieldLabel
-                        htmlFor={field.name}
-                        className="font-normal"
-                      >
+                      <FieldLabel htmlFor={field.name} className="font-normal">
                         Public Room
                       </FieldLabel>
                       {fieldState.error && (
@@ -115,6 +115,29 @@ export function CreateRoomDialog() {
                 )
               }}
             />
+            {!isPublic && (
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => {
+                  return (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        type="password"
+                        aria-invalid={fieldState.invalid}
+                        disabled={form.formState.isSubmitting}
+                      />
+                      {fieldState.error && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )
+                }}
+              />
+            )}
             <Field orientation={'horizontal'} className="w-full">
               <Button className="grow" type="submit">
                 <LoadingSwap isLoading={form.formState.isSubmitting}>

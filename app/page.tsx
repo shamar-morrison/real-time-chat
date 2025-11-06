@@ -84,16 +84,17 @@ async function getPublicRooms() {
 
   const { data, error } = await supabase
     .from('chat_room')
-    .select('id, name, chat_room_member (count)')
-    .eq('is_public', true)
+    .select('id, name, is_public, password_hash, chat_room_member (count)')
     .order('name', { ascending: true })
 
   if (error) return []
 
-  return data.map(({ chat_room_member, id, name }) => ({
+  return data.map(({ chat_room_member, id, name, is_public, password_hash }) => ({
     id,
     name,
     member_count: chat_room_member[0].count,
+    is_public,
+    has_password: password_hash !== null,
   }))
 }
 
@@ -102,7 +103,7 @@ async function getJoinedRooms(userId: string) {
 
   const { data, error } = await supabase
     .from('chat_room')
-    .select('id, name, chat_room_member (member_id)')
+    .select('id, name, is_public, password_hash, chat_room_member (member_id)')
     .order('name', { ascending: true })
 
   if (error) return [].filter(() => {})
@@ -111,9 +112,11 @@ async function getJoinedRooms(userId: string) {
     .filter((room) =>
       room.chat_room_member.some(({ member_id }) => member_id === userId),
     )
-    .map(({ chat_room_member, id, name }) => ({
+    .map(({ chat_room_member, id, name, is_public, password_hash }) => ({
       id,
       name,
       member_count: chat_room_member.length,
+      is_public,
+      has_password: password_hash !== null,
     }))
 }

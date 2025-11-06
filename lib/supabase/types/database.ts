@@ -20,18 +20,21 @@ export type Database = {
           id: string
           is_public: boolean
           name: string
+          password_hash: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           is_public: boolean
           name: string
+          password_hash?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           is_public?: boolean
           name?: string
+          password_hash?: string | null
         }
         Relationships: []
       }
@@ -71,6 +74,8 @@ export type Database = {
       messages: {
         Row: {
           author_id: string
+          author_image_url: string | null
+          author_name: string | null
           chat_room_id: string
           created_at: string
           id: string
@@ -78,6 +83,8 @@ export type Database = {
         }
         Insert: {
           author_id: string
+          author_image_url?: string | null
+          author_name?: string | null
           chat_room_id: string
           created_at?: string
           id?: string
@@ -85,6 +92,8 @@ export type Database = {
         }
         Update: {
           author_id?: string
+          author_image_url?: string | null
+          author_name?: string | null
           chat_room_id?: string
           created_at?: string
           id?: string
