@@ -1,7 +1,7 @@
 'use client'
 
 import { ActionButton } from '@/components/ui/action-button'
-import { useCurrentUser } from '@/hooks/use-current-user'
+import { useUser } from '@/contexts/user-context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { ComponentProps } from 'react'
@@ -11,7 +11,7 @@ export function JoinRoomButton({
   roomId,
   ...props
 }: Omit<ComponentProps<typeof ActionButton>, 'action'> & { roomId: string }) {
-  const { user } = useCurrentUser()
+  const { user } = useUser()
   const router = useRouter()
 
   async function joinRoom() {
