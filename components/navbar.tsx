@@ -41,8 +41,7 @@ export function Navbar() {
           LinaChat
         </Link>
 
-        <div className="flex items-center gap-3">
-          <ModeToggle />
+        <div className="flex items-center gap-1">
           {isLoading ? (
             <div>
               <Spinner />
@@ -61,6 +60,7 @@ export function Navbar() {
                   </Link>
                 </Button>
               </span>
+              <ModeToggle />
               <LogoutButton />
             </div>
           )}
