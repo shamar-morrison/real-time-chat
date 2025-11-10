@@ -4,13 +4,18 @@ import { Toaster } from '@/components/ui/sonner'
 import { UserProvider } from '@/contexts/user-context'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import type { Metadata } from 'next'
-import { Poppins } from 'next/font/google'
+import { Geist, Poppins } from 'next/font/google'
 import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 
 const poppins = Poppins({
   variable: '--font-poppins',
   weight: ['400', '900'],
+})
+
+const geist = Geist({
+  variable: '--font-geist',
+  weight: ['900'],
 })
 
 export const metadata: Metadata = {

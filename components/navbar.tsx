@@ -42,6 +42,7 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-1">
+          <ModeToggle />
           {isLoading ? (
             <div>
               <Spinner />
@@ -60,7 +61,6 @@ export function Navbar() {
                   </Link>
                 </Button>
               </span>
-              <ModeToggle />
               <LogoutButton />
             </div>
           )}
