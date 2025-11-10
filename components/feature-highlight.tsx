@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import { LucideIcon } from "lucide-react";
-import { staggerItemVariants } from "@/lib/animations";
+import { staggerItemVariants } from '@/lib/animations'
+import { motion } from 'framer-motion'
+import { LucideIcon } from 'lucide-react'
 
 interface FeatureHighlightProps {
-  icon: LucideIcon;
-  title: string;
-  description: string;
+  icon: LucideIcon
+  title: string
+  description: string
 }
 
 export function FeatureHighlight({
@@ -18,7 +18,6 @@ export function FeatureHighlight({
   return (
     <motion.div
       variants={staggerItemVariants}
-      whileHover={{ y: -4 }}
       className="flex flex-col items-center gap-3 p-6 rounded-xl border border-border bg-card/50 backdrop-blur-sm hover:bg-card/80 hover:border-primary/20 transition-all duration-300 group"
     >
       <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -29,5 +28,5 @@ export function FeatureHighlight({
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
     </motion.div>
-  );
+  )
 }
