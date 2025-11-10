@@ -12,11 +12,6 @@ This is a real-time chat application built with Next.js and Supabase.
 - [Scripts](#scripts)
 - [Features](#features)
 - [Database Schema](#database-schema)
-- [Contributing](#contributing)
-- [Authors](#authors)
-- [Acknowledgements](#acknowledgements)
-- [Deployment](#deployment)
-- [License](#license)
 
 ## Tech Stack
 
