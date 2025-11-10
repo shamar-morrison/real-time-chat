@@ -1,4 +1,4 @@
-<img width="3336" height="2256" alt="CleanShot 2025-11-10 at 16 43 11@2x" src="https://github.com/user-attachments/assets/17e0ad31-8675-40f1-bd44-096d1c76b756" />
+[<img width="3336" height="2256" alt="CleanShot 2025-11-10 at 16 43 11@2x" src="https://github.com/user-attachments/assets/17e0ad31-8675-40f1-bd44-096d1c76b756" />](https://real-time-chat-plum-mu.vercel.app)
 
 # Real-Time Chat with Next.js and Supabase
 
