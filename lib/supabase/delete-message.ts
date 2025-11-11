@@ -4,10 +4,8 @@ import { Message } from '@/app/rooms/[id]/_client'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 
-export async function sendMessage(data: {
-  id: string
-  text: string
-  roomId: string
+export async function deleteMessage(data: {
+  messageId: string
 }): Promise<
   { error: false; message: Message } | { error: true; message: string }
 > {
@@ -16,38 +14,38 @@ export async function sendMessage(data: {
     return { error: true, message: 'User not authenticated' }
   }
 
-  if (!data.text.trim()) {
-    return { error: true, message: 'Message cannot be empty' }
-  }
-
   const supabase = await createAdminClient()
 
-  const { data: membership, error: membershipError } = await supabase
-    .from('chat_room_member')
-    .select('member_id')
-    .eq('chat_room_id', data.roomId)
-    .eq('member_id', user.id)
+  // First, verify the user is the author of the message
+  const { data: existingMessage, error: fetchError } = await supabase
+    .from('messages')
+    .select('author_id')
+    .eq('id', data.messageId)
     .single()
 
-  if (membershipError || !membership) {
-    return { error: true, message: 'User is not a member of the chat room' }
+  if (fetchError || !existingMessage) {
+    return { error: true, message: 'Message not found' }
   }
 
+  if (existingMessage.author_id !== user.id) {
+    return {
+      error: true,
+      message: 'You can only delete your own messages',
+    }
+  }
+
+  // Perform soft delete by setting deleted_at timestamp
   const { data: message, error } = await supabase
     .from('messages')
-    .insert({
-      id: data.id,
-      text: data.text.trim(),
-      chat_room_id: data.roomId,
-      author_id: user.id,
-    })
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', data.messageId)
     .select(
       'id, text, created_at, author_id, deleted_at, author:user_profile (name, image_url)',
     )
     .single()
 
   if (error) {
-    return { error: true, message: 'Failed to send message' }
+    return { error: true, message: 'Failed to delete message' }
   }
 
   return { error: false, message }

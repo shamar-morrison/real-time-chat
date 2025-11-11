@@ -6,14 +6,15 @@ import { InviteUserModal } from '@/components/invite-user-modal'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
-import { useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import { useCallback, useEffect, useState } from 'react'
 
 export type Message = {
   id: string
   text: string
   created_at: string
   author_id: string
+  deleted_at: string | null
   author: {
     name: string
     image_url: string | null
@@ -36,22 +37,43 @@ export function RoomClient({
   }
   messages: Message[]
 }) {
-  const { connectedUsers, messages: realtimeMessages } = useRealtimeChat({
-    roomId: room.id,
-    userId: user.id,
-  })
+  const [sentMessages, setSentMessages] = useState<
+    (Message & { status: 'pending' | 'error' | 'success' })[]
+  >([])
+
   const {
     loadMoreMessages,
     messages: oldMessages,
     status,
     triggerQueryRef,
+    setMessages: setOldMessages,
   } = useInfiniteScrollChat({
     roomId: room.id,
     startingMessages: messages.toReversed(),
   })
-  const [sentMessages, setSentMessages] = useState<
-    (Message & { status: 'pending' | 'error' | 'success' })[]
-  >([])
+
+  const handleMessageUpdate = useCallback(
+    (messageId: string, updates: Partial<Message>) => {
+      setOldMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageId ? { ...msg, ...updates } : msg,
+        ),
+      )
+
+      setSentMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageId ? { ...msg, ...updates } : msg,
+        ),
+      )
+    },
+    [setOldMessages],
+  )
+
+  const { connectedUsers, messages: realtimeMessages } = useRealtimeChat({
+    roomId: room.id,
+    userId: user.id,
+    onMessageUpdate: handleMessageUpdate,
+  })
 
   const visibleMessages = oldMessages.concat(
     realtimeMessages,
@@ -97,6 +119,7 @@ export function RoomClient({
               <ChatMessage
                 key={message.id}
                 {...message}
+                currentUserId={user.id}
                 ref={index === 0 && status === 'idle' ? triggerQueryRef : null}
               />
             ))}
@@ -113,6 +136,7 @@ export function RoomClient({
               text: message.text,
               created_at: new Date().toISOString(),
               author_id: user.id,
+              deleted_at: null,
               author: {
                 name: user.name,
                 image_url: user.image_url,
@@ -141,9 +165,11 @@ export function RoomClient({
 function useRealtimeChat({
   roomId,
   userId,
+  onMessageUpdate,
 }: {
   roomId: string
   userId: string
+  onMessageUpdate?: (messageId: string, updates: Partial<Message>) => void
 }) {
   const [connectedUsers, setConnectedUsers] = useState(1)
   const [messages, setMessages] = useState<Message[]>([])
@@ -187,12 +213,37 @@ function useRealtimeChat({
                 text: record.text,
                 created_at: record.created_at,
                 author_id: record.author_id,
+                deleted_at: record.deleted_at || null,
                 author: {
                   name: record.author_name,
                   image_url: record.author_image_url,
                 },
               },
             ])
+          },
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages',
+            filter: `chat_room_id=eq.${roomId}`,
+          },
+          (payload) => {
+            const record = payload.new as any
+            const updates = {
+              text: record.text,
+              deleted_at: record.deleted_at || null,
+            }
+            // Update the message in the realtime list
+            setMessages((prevMessages) =>
+              prevMessages.map((msg) =>
+                msg.id === record.id ? { ...msg, ...updates } : msg,
+              ),
+            )
+            // Notify parent component to update other message lists
+            onMessageUpdate?.(record.id, updates)
           },
         )
         .subscribe((status) => {
@@ -208,7 +259,7 @@ function useRealtimeChat({
       newChannel.untrack()
       newChannel.unsubscribe()
     }
-  }, [roomId, userId])
+  }, [roomId, userId, onMessageUpdate])
 
   return { connectedUsers, messages }
 }
@@ -234,7 +285,7 @@ function useInfiniteScrollChat({
     const { data, error } = await supabase
       .from('messages')
       .select(
-        'id, text, created_at, author_id, author:user_profile (name, image_url)',
+        'id, text, created_at, author_id, deleted_at, author:user_profile (name, image_url)',
       )
       .eq('chat_room_id', roomId)
       .lt('created_at', messages[0].created_at)
@@ -273,5 +324,5 @@ function useInfiniteScrollChat({
     }
   }
 
-  return { loadMoreMessages, messages, status, triggerQueryRef }
+  return { loadMoreMessages, messages, status, triggerQueryRef, setMessages }
 }

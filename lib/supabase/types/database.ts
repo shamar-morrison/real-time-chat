@@ -78,6 +78,7 @@ export type Database = {
           author_name: string | null
           chat_room_id: string
           created_at: string
+          deleted_at: string | null
           id: string
           text: string
         }
@@ -87,6 +88,7 @@ export type Database = {
           author_name?: string | null
           chat_room_id: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
           text: string
         }
@@ -96,6 +98,7 @@ export type Database = {
           author_name?: string | null
           chat_room_id?: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
           text?: string
         }
