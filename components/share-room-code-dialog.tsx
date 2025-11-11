@@ -48,6 +48,12 @@ export function ShareRoomCodeDialog({
     }
   }, [minutesRemaining])
 
+  // Sync currentCode with inviteCode prop changes (e.g., when another user regenerates)
+  useEffect(() => {
+    setCurrentCode(inviteCode)
+    setMinutesRemaining(null)
+  }, [inviteCode])
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(currentCode)
