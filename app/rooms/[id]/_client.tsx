@@ -14,6 +14,7 @@ export type Message = {
   text: string
   created_at: string
   author_id: string
+  deleted_at: string | null
   author: {
     name: string
     image_url: string | null
@@ -97,6 +98,7 @@ export function RoomClient({
               <ChatMessage
                 key={message.id}
                 {...message}
+                currentUserId={user.id}
                 ref={index === 0 && status === 'idle' ? triggerQueryRef : null}
               />
             ))}
@@ -113,6 +115,7 @@ export function RoomClient({
               text: message.text,
               created_at: new Date().toISOString(),
               author_id: user.id,
+              deleted_at: null,
               author: {
                 name: user.name,
                 image_url: user.image_url,
@@ -187,12 +190,37 @@ function useRealtimeChat({
                 text: record.text,
                 created_at: record.created_at,
                 author_id: record.author_id,
+                deleted_at: record.deleted_at || null,
                 author: {
                   name: record.author_name,
                   image_url: record.author_image_url,
                 },
               },
             ])
+          },
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages',
+            filter: `chat_room_id=eq.${roomId}`,
+          },
+          (payload) => {
+            const record = payload.new as any
+            // Update the message in the list (e.g., when deleted)
+            setMessages((prevMessages) =>
+              prevMessages.map((msg) =>
+                msg.id === record.id
+                  ? {
+                      ...msg,
+                      text: record.text,
+                      deleted_at: record.deleted_at || null,
+                    }
+                  : msg
+              )
+            )
           },
         )
         .subscribe((status) => {
@@ -234,7 +262,7 @@ function useInfiniteScrollChat({
     const { data, error } = await supabase
       .from('messages')
       .select(
-        'id, text, created_at, author_id, author:user_profile (name, image_url)',
+        'id, text, created_at, author_id, deleted_at, author:user_profile (name, image_url)',
       )
       .eq('chat_room_id', roomId)
       .lt('created_at', messages[0].created_at)
