@@ -16,22 +16,28 @@ export type Database = {
     Tables: {
       chat_room: {
         Row: {
+          code_regenerated_at: string | null
           created_at: string
           id: string
+          invite_code: string
           is_public: boolean
           name: string
           password_hash: string | null
         }
         Insert: {
+          code_regenerated_at?: string | null
           created_at?: string
           id?: string
+          invite_code: string
           is_public: boolean
           name: string
           password_hash?: string | null
         }
         Update: {
+          code_regenerated_at?: string | null
           created_at?: string
           id?: string
+          invite_code?: string
           is_public?: boolean
           name?: string
           password_hash?: string | null

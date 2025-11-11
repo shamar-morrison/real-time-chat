@@ -2,7 +2,7 @@
 
 import { ChatInput } from '@/components/chat-input'
 import { ChatMessage } from '@/components/chat-message'
-import { InviteUserModal } from '@/components/invite-user-modal'
+import { ShareRoomCodeDialog } from '@/components/share-room-code-dialog'
 import { NewMessagesIndicator } from '@/components/new-messages-indicator'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
@@ -37,6 +37,8 @@ export function RoomClient({
   room: {
     id: string
     name: string
+    invite_code: string
+    is_creator: boolean
   }
   messages: Message[]
 }) {
@@ -145,7 +147,11 @@ export function RoomClient({
             {connectedUsers} {connectedUsers === 1 ? 'user' : 'users'} online
           </p>
         </div>
-        <InviteUserModal roomId={room.id} />
+        <ShareRoomCodeDialog
+          roomId={room.id}
+          inviteCode={room.invite_code}
+          isCreator={room.is_creator}
+        />
       </div>
       <div
         ref={scrollContainerRef}

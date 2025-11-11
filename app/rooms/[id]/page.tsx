@@ -2,7 +2,6 @@ import { RoomClient } from '@/app/rooms/[id]/_client'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { toast } from 'sonner'
 
 export default async function RoomPage({
   params,
@@ -27,7 +26,6 @@ export default async function RoomPage({
 async function getRoom(id: string) {
   const user = await getCurrentUser()
   if (!user) {
-    toast.error('You must be logged in to view this page')
     return null
   }
 
@@ -35,19 +33,30 @@ async function getRoom(id: string) {
 
   const { data, error } = await supabase
     .from('chat_room')
-    .select('id, name, chat_room_member!inner ()')
+    .select('id, name, invite_code, chat_room_member!inner (member_id, created_at)')
     .eq('id', id)
     .eq('chat_room_member.member_id', user.id)
     .single()
 
   if (error) {
-    toast.error('Error', {
-      description: error.message,
-    })
     return null
   }
 
-  return data
+  // Get all members to determine who is the creator (first member)
+  const { data: allMembers } = await supabase
+    .from('chat_room_member')
+    .select('member_id, created_at')
+    .eq('chat_room_id', id)
+    .order('created_at', { ascending: true })
+
+  const isCreator = allMembers && allMembers.length > 0 && allMembers[0].member_id === user.id
+
+  return {
+    id: data.id,
+    name: data.name,
+    invite_code: data.invite_code,
+    is_creator: isCreator ?? false,
+  }
 }
 
 async function getMessages(roomId: string) {
@@ -66,9 +75,6 @@ async function getMessages(roomId: string) {
     .limit(100)
 
   if (error) {
-    toast.error('Error getting messages', {
-      description: error.message,
-    })
     return []
   }
 
@@ -80,7 +86,6 @@ async function getUser() {
   const user = await getCurrentUser()
 
   if (!user) {
-    toast.error('You must be logged in to view this page')
     return null
   }
 
@@ -91,9 +96,6 @@ async function getUser() {
     .single()
 
   if (error) {
-    toast.error('Error', {
-      description: error.message,
-    })
     return null
   }
 

@@ -1,6 +1,7 @@
 import { AnimatedPage } from '@/components/animated-page'
 import { AnimatedRoomList } from '@/components/animated-room-list'
 import { CreateRoomDialog } from '@/components/create-room-dialog'
+import { JoinRoomByCodeDialog } from '@/components/join-room-by-code-dialog'
 import {
   Empty,
   EmptyContent,
@@ -53,7 +54,10 @@ export default async function Home() {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <CreateRoomDialog />
+              <div className="flex gap-2">
+                <CreateRoomDialog />
+                <JoinRoomByCodeDialog />
+              </div>
             </EmptyContent>
           </Empty>
         </div>
