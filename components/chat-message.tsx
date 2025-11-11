@@ -201,7 +201,7 @@ export function ChatMessage({
           ) : (
             <motion.p
               className={cn(
-                "text-sm wrap-break-words whitespace-pre",
+                "text-sm break-words whitespace-pre-wrap overflow-hidden",
                 isDeleted && "italic text-muted-foreground"
               )}
               variants={staggerItemVariants}
