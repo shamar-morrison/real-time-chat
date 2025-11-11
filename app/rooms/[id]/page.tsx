@@ -33,7 +33,7 @@ async function getRoom(id: string) {
 
   const { data, error } = await supabase
     .from('chat_room')
-    .select('id, name, invite_code, is_public, chat_room_member!inner (member_id, created_at)')
+    .select('id, name, invite_code, is_public, password_hash, chat_room_member!inner (member_id, created_at)')
     .eq('id', id)
     .eq('chat_room_member.member_id', user.id)
     .single()
@@ -56,6 +56,7 @@ async function getRoom(id: string) {
     name: data.name,
     invite_code: data.invite_code,
     is_public: data.is_public,
+    has_password: data.password_hash !== null,
     is_creator: isCreator ?? false,
   }
 }

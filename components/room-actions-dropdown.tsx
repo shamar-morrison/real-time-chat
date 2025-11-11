@@ -47,8 +47,6 @@ export function RoomActionsDropdown({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button size="sm" variant="outline">
-            {/* <ShareIcon className="w-4 h-4" /> */}
-            {/* Room Actions */}
             <MoreHorizontalIcon className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>

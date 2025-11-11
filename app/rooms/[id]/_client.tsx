@@ -9,6 +9,7 @@ import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import { AnimatePresence } from 'framer-motion'
+import { Lock } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type Message = {
@@ -39,6 +40,7 @@ export function RoomClient({
     name: string
     invite_code: string
     is_public: boolean
+    has_password: boolean
     is_creator: boolean
   }
   messages: Message[]
@@ -143,7 +145,12 @@ export function RoomClient({
     <div className="container mx-auto h-screen-with-header border border-y-0 flex flex-col">
       <div className="flex items-center justify-between gap-2 p-4">
         <div className="border-b">
-          <h1 className="text-2xl font-bold">{room.name}</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            {room.name}
+            {room.has_password && (
+              <Lock className="h-5 w-5 text-muted-foreground" />
+            )}
+          </h1>
           <p className="text-muted-foreground text-sm">
             {connectedUsers} {connectedUsers === 1 ? 'user' : 'users'} online
           </p>

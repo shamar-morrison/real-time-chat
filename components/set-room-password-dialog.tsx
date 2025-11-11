@@ -73,6 +73,7 @@ export function SetRoomPasswordDialog({
       setIsSubmitting(false)
     } else {
       toast.success(result.message)
+      setIsSubmitting(false)
       onOpenChange(false)
       setPassword('')
       setConfirmPassword('')
