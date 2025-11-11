@@ -4,6 +4,7 @@ import { ChatInput } from '@/components/chat-input'
 import { ChatMessage } from '@/components/chat-message'
 import { InviteUserModal } from '@/components/invite-user-modal'
 import { Button } from '@/components/ui/button'
+import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import { AnimatePresence } from 'framer-motion'
@@ -114,6 +115,15 @@ export function RoomClient({
                 Retry
               </Button>
             </div>
+          )}
+          {visibleMessages.length === 0 && status !== 'loading' && (
+            <Empty className="flex">
+              <EmptyHeader className="opacity-50">
+                <EmptyTitle>
+                  No messages yet. Start the conversation!
+                </EmptyTitle>
+              </EmptyHeader>
+            </Empty>
           )}
           <AnimatePresence initial={false}>
             {visibleMessages.map((message, index) => (
