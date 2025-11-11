@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedRoomCard } from "@/components/animated-room-card";
 import { CreateRoomDialog } from "@/components/create-room-dialog";
 import { staggerContainerVariants, staggerItemVariants } from "@/lib/animations";
@@ -33,11 +33,18 @@ export function AnimatedRoomList({
         initial="initial"
         animate="animate"
       >
-        {rooms.map((room) => (
-          <motion.div key={room.id} variants={staggerItemVariants}>
-            <AnimatedRoomCard {...room} isJoined={isJoined} />
-          </motion.div>
-        ))}
+        <AnimatePresence mode="popLayout">
+          {rooms.map((room) => (
+            <motion.div
+              key={`${room.id}-${isJoined ? 'joined' : 'public'}`}
+              variants={staggerItemVariants}
+              layout
+              exit="exit"
+            >
+              <AnimatedRoomCard {...room} isJoined={isJoined} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </motion.div>
     </div>
   );

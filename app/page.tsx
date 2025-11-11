@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   description: 'Real-time chat application',
 }
 
+// disable caching to ensure fresh data on every request
+export const revalidate = 0
+
 export default async function Home() {
   const user = await getCurrentUser()
 

@@ -30,7 +30,8 @@ export function LeaveRoomButton({
       return { error: true, message: 'Failed to leave room' }
     }
 
-    router.refresh()
+    // Use push instead of refresh to force a full navigation and ensure fresh data
+    router.push('/')
 
     return { error: false }
   }
