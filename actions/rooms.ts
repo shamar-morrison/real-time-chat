@@ -274,7 +274,7 @@ export async function regenerateRoomCode(roomId: string) {
   // Get room details and check rate limit
   const { data: room, error: roomError } = await supabase
     .from('chat_room')
-    .select('id, code_regenerated_at, chat_room_member!inner(member_id)')
+    .select('id, code_regenerated_at')
     .eq('id', roomId)
     .single()
 
@@ -282,8 +282,6 @@ export async function regenerateRoomCode(roomId: string) {
     return { error: true, message: 'Room not found' }
   }
 
-  // Check if user is a member (for now, any member can see this, but we'll verify creator status)
-  // We need to find the room creator - the first member added
   const { data: members, error: membersError } = await supabase
     .from('chat_room_member')
     .select('member_id, created_at')
