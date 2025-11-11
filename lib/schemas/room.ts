@@ -21,3 +21,11 @@ export const createRoomSchema = z
   )
 
 export type CreateRoomData = z.infer<typeof createRoomSchema>
+
+export const roomCodeSchema = z
+  .string()
+  .min(10, 'Room code must be at least 10 characters')
+  .max(12, 'Room code must be at most 12 characters')
+  .regex(/^[a-zA-Z0-9]+$/, 'Room code must contain only letters and numbers')
+
+export type RoomCode = z.infer<typeof roomCodeSchema>

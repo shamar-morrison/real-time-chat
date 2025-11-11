@@ -35,7 +35,7 @@ async function getRoom(id: string) {
 
   const { data, error } = await supabase
     .from('chat_room')
-    .select('id, name, chat_room_member!inner ()')
+    .select('id, name, invite_code, chat_room_member!inner (member_id, created_at)')
     .eq('id', id)
     .eq('chat_room_member.member_id', user.id)
     .single()
@@ -47,7 +47,21 @@ async function getRoom(id: string) {
     return null
   }
 
-  return data
+  // Get all members to determine who is the creator (first member)
+  const { data: allMembers } = await supabase
+    .from('chat_room_member')
+    .select('member_id, created_at')
+    .eq('chat_room_id', id)
+    .order('created_at', { ascending: true })
+
+  const isCreator = allMembers && allMembers.length > 0 && allMembers[0].member_id === user.id
+
+  return {
+    id: data.id,
+    name: data.name,
+    invite_code: data.invite_code,
+    is_creator: isCreator,
+  }
 }
 
 async function getMessages(roomId: string) {
