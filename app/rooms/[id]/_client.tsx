@@ -2,8 +2,8 @@
 
 import { ChatInput } from '@/components/chat-input'
 import { ChatMessage } from '@/components/chat-message'
-import { ShareRoomCodeDialog } from '@/components/share-room-code-dialog'
 import { NewMessagesIndicator } from '@/components/new-messages-indicator'
+import { RoomActionsDropdown } from '@/components/room-actions-dropdown'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { createClient } from '@/lib/supabase/client'
@@ -38,6 +38,7 @@ export function RoomClient({
     id: string
     name: string
     invite_code: string
+    is_public: boolean
     is_creator: boolean
   }
   messages: Message[]
@@ -147,10 +148,11 @@ export function RoomClient({
             {connectedUsers} {connectedUsers === 1 ? 'user' : 'users'} online
           </p>
         </div>
-        <ShareRoomCodeDialog
+        <RoomActionsDropdown
           roomId={room.id}
           inviteCode={room.invite_code}
           isCreator={room.is_creator}
+          isPublic={room.is_public}
         />
       </div>
       <div

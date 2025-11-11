@@ -29,3 +29,38 @@ export const roomCodeSchema = z
   .regex(/^[a-zA-Z0-9]+$/, 'Room code must contain only letters and numbers')
 
 export type RoomCode = z.infer<typeof roomCodeSchema>
+
+export const toggleRoomPrivacySchema = z
+  .object({
+    roomId: z.string().uuid('Invalid room ID'),
+    makePublic: z.boolean(),
+    password: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // If making room private, password is required
+      if (!data.makePublic && !data.password) {
+        return false
+      }
+      return true
+    },
+    {
+      message: 'Password is required when making room private',
+      path: ['password'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If password is provided, it must be at least 6 characters
+      if (data.password && data.password.length < 6) {
+        return false
+      }
+      return true
+    },
+    {
+      message: 'Password must be at least 6 characters',
+      path: ['password'],
+    }
+  )
+
+export type ToggleRoomPrivacyData = z.infer<typeof toggleRoomPrivacySchema>

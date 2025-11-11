@@ -1,6 +1,10 @@
 'use server'
 
-import { createRoomSchema, roomCodeSchema } from '@/lib/schemas/room'
+import {
+  createRoomSchema,
+  roomCodeSchema,
+  toggleRoomPrivacySchema,
+} from '@/lib/schemas/room'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
@@ -336,5 +340,69 @@ export async function regenerateRoomCode(roomId: string) {
     error: false,
     inviteCode: newCode,
     message: 'Room code regenerated successfully',
+  }
+}
+
+export async function toggleRoomPrivacy(
+  unsafeData: z.infer<typeof toggleRoomPrivacySchema>
+) {
+  const { success, data } = toggleRoomPrivacySchema.safeParse(unsafeData)
+
+  if (!success) {
+    return { error: true, message: 'Invalid data' }
+  }
+
+  const user = await getCurrentUser()
+  if (!user) {
+    return { error: true, message: 'User not authenticated' }
+  }
+
+  const supabase = createAdminClient()
+
+  // Verify user is the room creator
+  const { data: members, error: membersError } = await supabase
+    .from('chat_room_member')
+    .select('member_id, created_at')
+    .eq('chat_room_id', data.roomId)
+    .order('created_at', { ascending: true })
+
+  if (membersError || !members || members.length === 0) {
+    return { error: true, message: 'Failed to verify room membership' }
+  }
+
+  // First member is the creator
+  const creatorId = members[0].member_id
+  if (creatorId !== user.id) {
+    return {
+      error: true,
+      message: 'Only the room creator can change room privacy settings',
+    }
+  }
+
+  // Prepare update data
+  let passwordHash: string | null = null
+  if (!data.makePublic && data.password) {
+    // Making room private - hash the password
+    passwordHash = await bcrypt.hash(data.password, 10)
+  }
+
+  // Update room privacy settings
+  const { error: updateError } = await supabase
+    .from('chat_room')
+    .update({
+      is_public: data.makePublic,
+      password_hash: passwordHash,
+    })
+    .eq('id', data.roomId)
+
+  if (updateError) {
+    return { error: true, message: 'Failed to update room privacy settings' }
+  }
+
+  return {
+    error: false,
+    message: data.makePublic
+      ? 'Room is now public'
+      : 'Room is now private and password protected',
   }
 }

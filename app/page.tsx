@@ -92,6 +92,7 @@ async function getPublicRooms() {
   const { data, error } = await supabase
     .from('chat_room')
     .select('id, name, is_public, password_hash, chat_room_member (count)')
+    .eq('is_public', true)
     .order('name', { ascending: true })
 
   if (error) return []
