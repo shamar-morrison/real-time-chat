@@ -4,13 +4,13 @@ import { createRoomSchema, roomCodeSchema } from '@/lib/schemas/room'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 import bcrypt from 'bcryptjs'
-import { redirect } from 'next/dist/client/components/navigation.react-server'
 import z from 'zod'
 
 // Helper function to generate unique room invite codes
 async function generateRoomCode(): Promise<string> {
   const supabase = createAdminClient()
-  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const characters =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 
   // Try up to 10 times to generate a unique code
   for (let attempt = 0; attempt < 10; attempt++) {
@@ -297,14 +297,18 @@ export async function regenerateRoomCode(roomId: string) {
   // First member is the creator
   const creatorId = members[0].member_id
   if (creatorId !== user.id) {
-    return { error: true, message: 'Only the room creator can regenerate the code' }
+    return {
+      error: true,
+      message: 'Only the room creator can regenerate the code',
+    }
   }
 
   // Check rate limit: 1 hour between regenerations
   if (room.code_regenerated_at) {
     const lastRegenerated = new Date(room.code_regenerated_at)
     const now = new Date()
-    const hoursSinceLastRegen = (now.getTime() - lastRegenerated.getTime()) / (1000 * 60 * 60)
+    const hoursSinceLastRegen =
+      (now.getTime() - lastRegenerated.getTime()) / (1000 * 60 * 60)
 
     if (hoursSinceLastRegen < 1) {
       const minutesRemaining = Math.ceil((1 - hoursSinceLastRegen) * 60)
@@ -316,10 +320,8 @@ export async function regenerateRoomCode(roomId: string) {
     }
   }
 
-  // Generate new code
   const newCode = await generateRoomCode()
 
-  // Update room with new code and timestamp
   const { error: updateError } = await supabase
     .from('chat_room')
     .update({
@@ -332,5 +334,9 @@ export async function regenerateRoomCode(roomId: string) {
     return { error: true, message: 'Failed to regenerate room code' }
   }
 
-  return { error: false, inviteCode: newCode, message: 'Room code regenerated successfully' }
+  return {
+    error: false,
+    inviteCode: newCode,
+    message: 'Room code regenerated successfully',
+  }
 }
