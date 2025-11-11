@@ -2,7 +2,6 @@ import { RoomClient } from '@/app/rooms/[id]/_client'
 import { getCurrentUser } from '@/lib/supabase/get-current-user'
 import { createAdminClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { toast } from 'sonner'
 
 export default async function RoomPage({
   params,
@@ -27,7 +26,6 @@ export default async function RoomPage({
 async function getRoom(id: string) {
   const user = await getCurrentUser()
   if (!user) {
-    toast.error('You must be logged in to view this page')
     return null
   }
 
@@ -41,9 +39,6 @@ async function getRoom(id: string) {
     .single()
 
   if (error) {
-    toast.error('Error', {
-      description: error.message,
-    })
     return null
   }
 
@@ -60,7 +55,7 @@ async function getRoom(id: string) {
     id: data.id,
     name: data.name,
     invite_code: data.invite_code,
-    is_creator: isCreator,
+    is_creator: isCreator ?? false,
   }
 }
 
@@ -80,9 +75,6 @@ async function getMessages(roomId: string) {
     .limit(100)
 
   if (error) {
-    toast.error('Error getting messages', {
-      description: error.message,
-    })
     return []
   }
 
@@ -94,7 +86,6 @@ async function getUser() {
   const user = await getCurrentUser()
 
   if (!user) {
-    toast.error('You must be logged in to view this page')
     return null
   }
 
@@ -105,9 +96,6 @@ async function getUser() {
     .single()
 
   if (error) {
-    toast.error('Error', {
-      description: error.message,
-    })
     return null
   }
 
