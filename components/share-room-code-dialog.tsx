@@ -52,9 +52,14 @@ export function ShareRoomCodeDialog({
 
   // Sync currentCode with inviteCode prop changes (e.g., when another user regenerates)
   useEffect(() => {
-    setCurrentCode(inviteCode)
-    setMinutesRemaining(null)
-  }, [inviteCode])
+    if (currentCode !== inviteCode) {
+      setCurrentCode(inviteCode)
+      // Only reset countdown if user is not creator or countdown wasn't active
+      if (!isCreator || minutesRemaining === null) {
+        setMinutesRemaining(null)
+      }
+    }
+  }, [inviteCode, currentCode, isCreator, minutesRemaining])
 
   const handleCopy = async () => {
     try {
