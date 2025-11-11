@@ -3,12 +3,13 @@
 import { ChatInput } from '@/components/chat-input'
 import { ChatMessage } from '@/components/chat-message'
 import { InviteUserModal } from '@/components/invite-user-modal'
+import { NewMessagesIndicator } from '@/components/new-messages-indicator'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import { AnimatePresence } from 'framer-motion'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type Message = {
   id: string
@@ -42,6 +43,10 @@ export function RoomClient({
   const [sentMessages, setSentMessages] = useState<
     (Message & { status: 'pending' | 'error' | 'success' })[]
   >([])
+  const [isAtBottom, setIsAtBottom] = useState(true)
+  const [unreadCount, setUnreadCount] = useState(0)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const previousRealtimeCountRef = useRef(0)
 
   const {
     loadMoreMessages,
@@ -82,6 +87,55 @@ export function RoomClient({
     sentMessages.filter((m) => !realtimeMessages.find((rm) => rm.id === m.id)),
   )
 
+  // Track scroll position to determine if user is at bottom
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    const handleScroll = () => {
+      // In flex-col-reverse, scrollTop === 0 means at bottom
+      // Add small threshold for better UX
+      const threshold = 50
+      const atBottom = Math.abs(scrollContainer.scrollTop) <= threshold
+      setIsAtBottom(atBottom)
+
+      // Clear unread count when user scrolls to bottom
+      if (atBottom) {
+        setUnreadCount(0)
+      }
+    }
+
+    scrollContainer.addEventListener('scroll', handleScroll)
+    return () => scrollContainer.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Track new messages when user is scrolled up
+  useEffect(() => {
+    const currentRealtimeCount = realtimeMessages.length
+    const previousRealtimeCount = previousRealtimeCountRef.current
+
+    // Only increment unread count if:
+    // 1. New messages have arrived (count increased)
+    // 2. User is not at bottom
+    if (currentRealtimeCount > previousRealtimeCount && !isAtBottom) {
+      const newMessagesCount = currentRealtimeCount - previousRealtimeCount
+      setUnreadCount((prev) => prev + newMessagesCount)
+    }
+
+    previousRealtimeCountRef.current = currentRealtimeCount
+  }, [realtimeMessages.length, isAtBottom])
+
+  const scrollToBottom = useCallback(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    scrollContainer.scrollTo({
+      top: 0, // In flex-col-reverse, 0 is bottom
+      behavior: 'smooth',
+    })
+    setUnreadCount(0)
+  }, [])
+
   return (
     <div className="container mx-auto h-screen-with-header border border-y-0 flex flex-col">
       <div className="flex items-center justify-between gap-2 p-4">
@@ -94,6 +148,7 @@ export function RoomClient({
         <InviteUserModal roomId={room.id} />
       </div>
       <div
+        ref={scrollContainerRef}
         className="grow overflow-y-auto flex flex-col-reverse"
         style={{
           scrollbarWidth: 'thin',
@@ -137,6 +192,11 @@ export function RoomClient({
           </AnimatePresence>
         </div>
       </div>
+      <NewMessagesIndicator
+        count={unreadCount}
+        onClick={scrollToBottom}
+        show={!isAtBottom}
+      />
       <ChatInput
         roomId={room.id}
         onSend={(message) => {
