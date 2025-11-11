@@ -79,6 +79,7 @@ export type Database = {
           chat_room_id: string
           created_at: string
           deleted_at: string | null
+          edited_at: string | null
           id: string
           text: string
         }
@@ -89,6 +90,7 @@ export type Database = {
           chat_room_id: string
           created_at?: string
           deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           text: string
         }
@@ -99,6 +101,7 @@ export type Database = {
           chat_room_id?: string
           created_at?: string
           deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           text?: string
         }

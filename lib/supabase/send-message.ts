@@ -42,7 +42,7 @@ export async function sendMessage(data: {
       author_id: user.id,
     })
     .select(
-      'id, text, created_at, author_id, deleted_at, author:user_profile (name, image_url)',
+      'id, text, created_at, author_id, deleted_at, edited_at, author:user_profile (name, image_url)',
     )
     .single()
 

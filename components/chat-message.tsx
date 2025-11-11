@@ -25,8 +25,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { deleteMessage } from '@/lib/supabase/delete-message'
+import { editMessage } from '@/lib/supabase/edit-message'
 import { toast } from 'sonner'
 import { LoadingSwap } from '@/components/ui/loading-swap'
+import { Pencil } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 
 const DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
@@ -40,6 +43,7 @@ export function ChatMessage({
   author_id,
   created_at,
   deleted_at,
+  edited_at,
   status,
   currentUserId,
   ref,
@@ -52,9 +56,13 @@ export function ChatMessage({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedText, setEditedText] = useState(text)
+  const [isSaving, setIsSaving] = useState(false)
 
   const isOwnMessage = currentUserId === author_id
   const isDeleted = deleted_at !== null
+  const wasEdited = edited_at !== null
 
   async function handleDelete() {
     setIsDeleting(true)
@@ -70,6 +78,39 @@ export function ChatMessage({
     } finally {
       setIsDeleting(false)
     }
+  }
+
+  async function handleSaveEdit() {
+    if (!editedText.trim() || editedText === text) {
+      setIsEditing(false)
+      setEditedText(text)
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      const result = await editMessage({ messageId: id, newText: editedText })
+      if (result.error) {
+        toast.error(result.message)
+      } else {
+        setIsEditing(false)
+      }
+    } catch (error) {
+      toast.error('Failed to edit message')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  function handleCancelEdit() {
+    setEditedText(text)
+    setIsEditing(false)
+  }
+
+  function handleStartEdit() {
+    setEditedText(text)
+    setIsEditing(true)
+    setIsDropdownOpen(false)
   }
 
   return (
@@ -117,20 +158,61 @@ export function ChatMessage({
             <span className="text-xs text-muted-foreground">
               {DATE_FORMATTER.format(new Date(created_at))}
             </span>
-          </motion.div>
-          <motion.p
-            className={cn(
-              "text-sm wrap-break-words whitespace-pre",
-              isDeleted && "italic text-muted-foreground"
+            {wasEdited && !isDeleted && (
+              <span className="text-xs text-muted-foreground italic">(edited)</span>
             )}
-            variants={staggerItemVariants}
-          >
-            {isDeleted ? 'This message has been deleted' : text}
-          </motion.p>
+          </motion.div>
+          {isEditing ? (
+            <motion.div className="space-y-2" variants={staggerItemVariants}>
+              <Textarea
+                value={editedText}
+                onChange={(e) => setEditedText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleSaveEdit()
+                  }
+                  if (e.key === 'Escape') {
+                    handleCancelEdit()
+                  }
+                }}
+                className="min-h-[60px] text-sm resize-none"
+                autoFocus
+                disabled={isSaving}
+              />
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={handleSaveEdit}
+                  disabled={isSaving || !editedText.trim()}
+                >
+                  <LoadingSwap isLoading={isSaving}>Save</LoadingSwap>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCancelEdit}
+                  disabled={isSaving}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.p
+              className={cn(
+                "text-sm wrap-break-words whitespace-pre",
+                isDeleted && "italic text-muted-foreground"
+              )}
+              variants={staggerItemVariants}
+            >
+              {isDeleted ? 'This message has been deleted' : text}
+            </motion.p>
+          )}
         </motion.div>
 
-        {/* Show dropdown menu only for own messages that aren't deleted */}
-        {isOwnMessage && !isDeleted && (
+        {/* Show dropdown menu only for own messages that aren't deleted and not being edited */}
+        {isOwnMessage && !isDeleted && !isEditing && (
           <div className={cn(
             "absolute right-4 top-2 transition-opacity duration-150",
             isHovered || isDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -146,6 +228,13 @@ export function ChatMessage({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={handleStartEdit}
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive cursor-pointer"
                   onClick={() => setShowDeleteDialog(true)}
