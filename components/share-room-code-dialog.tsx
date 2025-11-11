@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { CheckIcon, CopyIcon, RefreshCwIcon, ShareIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, ShareIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -42,7 +42,9 @@ export function ShareRoomCodeDialog({
   useEffect(() => {
     if (minutesRemaining !== null && minutesRemaining > 0) {
       const timer = setTimeout(() => {
-        setMinutesRemaining((prev) => (prev !== null && prev > 0 ? prev - 1 : null))
+        setMinutesRemaining((prev) =>
+          prev !== null && prev > 0 ? prev - 1 : null,
+        )
       }, 60000) // Update every minute
       return () => clearTimeout(timer)
     }
@@ -139,9 +141,11 @@ export function ShareRoomCodeDialog({
                 onClick={handleRegenerate}
                 variant="outline"
                 className="w-full"
-                disabled={isRegenerating || (minutesRemaining !== null && minutesRemaining > 0)}
+                disabled={
+                  isRegenerating ||
+                  (minutesRemaining !== null && minutesRemaining > 0)
+                }
               >
-                <RefreshCwIcon className={`w-4 h-4 mr-2 ${isRegenerating ? 'animate-spin' : ''}`} />
                 <LoadingSwap isLoading={isRegenerating}>
                   {minutesRemaining !== null && minutesRemaining > 0
                     ? `Regenerate (wait ${minutesRemaining}m)`
@@ -155,7 +159,11 @@ export function ShareRoomCodeDialog({
           )}
 
           {/* Close Button */}
-          <Button variant="ghost" onClick={() => setOpen(false)} className="w-full">
+          <Button
+            variant="ghost"
+            onClick={() => setOpen(false)}
+            className="w-full"
+          >
             Close
           </Button>
         </div>
