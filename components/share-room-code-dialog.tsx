@@ -8,9 +8,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
-import { CheckIcon, CopyIcon, ShareIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -20,12 +19,20 @@ export function ShareRoomCodeDialog({
   roomId,
   inviteCode,
   isCreator,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: {
   roomId: string
   inviteCode: string
   isCreator: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+
+  // Use controlled state if provided, otherwise use internal state
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen
+  const setOpen = controlledOnOpenChange || setInternalOpen
   const [copied, setCopied] = useState(false)
   const [currentCode, setCurrentCode] = useState(inviteCode)
   const [isRegenerating, setIsRegenerating] = useState(false)
@@ -95,12 +102,6 @@ export function ShareRoomCodeDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          <ShareIcon className="w-4 h-4" />
-          Share Room Code
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share Room Code</DialogTitle>
