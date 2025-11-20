@@ -39,9 +39,7 @@ export function UserProvider({
       supabase.auth
         .getUser()
         .then(({ error, data }) => {
-          if (error || !data?.user) {
-            router.push('/auth/login')
-          } else {
+          if (!error && data?.user) {
             setUser(data.user)
           }
         })
@@ -54,9 +52,9 @@ export function UserProvider({
     } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
 
-      // Redirect to login if user logs out
+      // Redirect to home if user logs out
       if (event === 'SIGNED_OUT') {
-        router.push('/auth/login')
+        router.push('/')
       }
     })
 

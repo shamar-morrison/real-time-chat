@@ -42,12 +42,11 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    request.nextUrl.pathname.startsWith('/rooms')
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user trying to access rooms, redirect to home
     const url = request.nextUrl.clone()
-    url.pathname = '/auth/login'
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
