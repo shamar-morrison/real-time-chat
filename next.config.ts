@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   typedRoutes: true,
   images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
     remotePatterns: [
       {
         protocol: 'https',
