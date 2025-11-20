@@ -106,20 +106,24 @@ async function getJoinedRooms(userId: string) {
 
   const { data, error } = await supabase
     .from('chat_room')
-    .select('id, name, is_public, password_hash, chat_room_member (member_id)')
+    .select(
+      'id, name, is_public, password_hash, chat_room_member (count), joined:chat_room_member!inner(member_id)',
+    )
+    .eq('joined.member_id', userId)
     .order('name', { ascending: true })
 
-  if (error) return [].filter(() => {})
+  if (error) {
+    console.error('Error fetching joined rooms:', error)
+    return []
+  }
 
-  return data
-    .filter((room) =>
-      room.chat_room_member.some(({ member_id }) => member_id === userId),
-    )
-    .map(({ chat_room_member, id, name, is_public, password_hash }) => ({
+  return data.map(
+    ({ chat_room_member, id, name, is_public, password_hash }) => ({
       id,
       name,
-      member_count: chat_room_member.length,
+      member_count: chat_room_member[0]?.count ?? 0,
       is_public,
       has_password: password_hash !== null,
-    }))
+    }),
+  )
 }
